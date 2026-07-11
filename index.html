@@ -10,63 +10,57 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #2c3e50; /* Cor do fundo (azul escuro) */
+            background-color: #2c3e50; /* Cor do fundo da tela */
             margin: 0;
             overflow: hidden;
         }
         .flip-book {
-            box-shadow: 0 0 20px rgba(0,0,0,0.7); /* Sombra ao redor do livro */
-        }
-        .page {
-            background-color: white; /* Cor da página caso a imagem não carregue */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
         }
     </style>
 </head>
 <body>
 
-    <div class="flip-book" id="book">
-        <div class="page" style="background-image: url('capa.jpg')"></div>
-        
-        <div class="page" style="background-image: url('pag1.jpg')"></div>
-        <div class="page" style="background-image: url('pag2.jpg')"></div>
-        <div class="page" style="background-image: url('pag3.jpg')"></div>
-        <div class="page" style="background-image: url('pag4.jpg')"></div>
-        <div class="page" style="background-image: url('pag5.jpg')"></div>
-        <div class="page" style="background-image: url('pag6.jpg')"></div>
-        <div class="page" style="background-image: url('pag7.jpg')"></div>
-        <div class="page" style="background-image: url('pag8.jpg')"></div>
-        <div class="page" style="background-image: url('pag9.jpg')"></div>
-        <div class="page" style="background-image: url('pag10.jpg')"></div>
-        <div class="page" style="background-image: url('pag11.jpg')"></div>
-        <div class="page" style="background-image: url('pag12.jpg')"></div>
-        <div class="page" style="background-image: url('pag13.jpg')"></div>
-        <div class="page" style="background-image: url('pag14.jpg')"></div>
-        <div class="page" style="background-image: url('pag15.jpg')"></div>
-        
-        <div class="page" style="background-image: url('contracapa.jpg')"></div>
-    </div>
+    <!-- Contêiner do Livro vazio (o script vai colocar as imagens aqui) -->
+    <div class="flip-book" id="book"></div>
 
-    <!-- Biblioteca que cria o efeito 3D -->
+    <!-- Biblioteca 3D -->
     <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const pageFlip = new St.PageFlip(document.getElementById('book'), {
-                width: 400, // Largura padrão da página
-                height: 600, // Altura padrão da página
-                size: "stretch", // Faz o livro se adaptar ao celular/PC
+                width: 400,
+                height: 600,
+                size: "stretch",
                 minWidth: 300,
                 maxWidth: 500,
                 minHeight: 400,
                 maxHeight: 700,
-                drawShadow: true, // Sombra na dobra da página
-                showCover: true,  // Faz a primeira e última página agirem como capa dura
-                usePortrait: true // Essencial para funcionar bem de pé no celular
+                drawShadow: true,
+                showCover: true,
+                usePortrait: true
             });
 
-            pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+            // Força o carregamento direto das imagens
+            pageFlip.loadFromImages([
+                'capa.jpg',
+                'pag1.jpg',
+                'pag2.jpg',
+                'pag3.jpg',
+                'pag4.jpg',
+                'pag5.jpg',
+                'pag6.jpg',
+                'pag7.jpg',
+                'pag8.jpg',
+                'pag9.jpg',
+                'pag10.jpg',
+                'pag11.jpg',
+                'pag12.jpg',
+                'pag13.jpg',
+                'pag14.jpg',
+                'pag15.jpg',
+                'contracapa.jpg'
+            ]);
         });
     </script>
 </body>
