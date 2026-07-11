@@ -68,7 +68,7 @@
   <button id="btn-abrir">Abrir Presente! 🎁</button>
 </div>
 
-<!-- Audios -->
+<!-- Carrega os dois áudios -->
 <audio id="som-festa" src="happy.mp3"></audio>
 <audio id="som-virar" src="pag.mp3"></audio>
 
@@ -133,9 +133,11 @@
         acceleration: true,
         when: {
           turning: function() { 
-            // Toca o som de página toda vez que virar
+            // Reseta e toca o som da página virando
             somVirar.currentTime = 0;
-            somVirar.play();
+            somVirar.play().catch(function(e) {
+              console.log("Erro ao tocar o som da página:", e);
+            });
           }
         }
       });
