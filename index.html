@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Para Você</title>
     <style>
         body {
@@ -10,9 +10,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #2c3e50; /* Cor do fundo da tela */
+            background-color: #2c3e50; 
             margin: 0;
             overflow: hidden;
+            touch-action: none; /* Bloqueia o arrasto da página do navegador no celular */
         }
         .flip-book {
             box-shadow: 0 0 20px rgba(0,0,0,0.7);
@@ -21,7 +22,6 @@
 </head>
 <body>
 
-    <!-- Contêiner do Livro vazio (o script vai colocar as imagens aqui) -->
     <div class="flip-book" id="book"></div>
 
     <!-- Biblioteca 3D -->
@@ -32,34 +32,25 @@
                 width: 400,
                 height: 600,
                 size: "stretch",
-                minWidth: 300,
+                minWidth: 250,
                 maxWidth: 500,
-                minHeight: 400,
+                minHeight: 350,
                 maxHeight: 700,
                 drawShadow: true,
                 showCover: true,
-                usePortrait: true
+                usePortrait: true,
+                
+                // --- CONFIGURAÇÕES DE TOQUE QUE ESTAVAM FALTANDO ---
+                swipeDistance: 10,       // Distância mínima para o dedo ativar o movimento
+                clickEventForward: false, // Impede que o clique simples ignore o arrasto
+                useMouseEvents: true     // Garante que funcione arrastando no PC também
             });
 
-            // Força o carregamento direto das imagens
             pageFlip.loadFromImages([
-                'capa.jpg',
-                'pag1.jpg',
-                'pag2.jpg',
-                'pag3.jpg',
-                'pag4.jpg',
-                'pag5.jpg',
-                'pag6.jpg',
-                'pag7.jpg',
-                'pag8.jpg',
-                'pag9.jpg',
-                'pag10.jpg',
-                'pag11.jpg',
-                'pag12.jpg',
-                'pag13.jpg',
-                'pag14.jpg',
-                'pag15.jpg',
-                'contracapa.jpg'
+                'capa.jpg', 'pag1.jpg', 'pag2.jpg', 'pag3.jpg', 'pag4.jpg', 
+                'pag5.jpg', 'pag6.jpg', 'pag7.jpg', 'pag8.jpg', 'pag9.jpg', 
+                'pag10.jpg', 'pag11.jpg', 'pag12.jpg', 'pag13.jpg', 'pag14.jpg', 
+                'pag15.jpg', 'contracapa.jpg'
             ]);
         });
     </script>
