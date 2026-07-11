@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <!-- Bloqueia o zoom e o movimento involuntário da tela no celular -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Para Você</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -16,13 +15,30 @@
       height: 100vh;
       margin: 0;
       overflow: hidden;
-      /* Remove o comportamento de arrastar a página inteira no celular */
       touch-action: none; 
       -webkit-user-select: none;
       user-select: none;
     }
 
-    /* Contêiner para centralizar o livro perfeitamente */
+    /* --- ESTILO DO TOPO COM A IMAGEM PNG --- */
+    .topo-personalizado {
+      position: absolute;
+      top: 3vh; /* Distância do topo da tela */
+      left: 50%;
+      transform: translateX(-50%); /* Centraliza na horizontal */
+      text-align: center;
+      width: 90%;
+      z-index: 10; 
+    }
+
+    .topo-personalizado img {
+      max-height: 70px; /* Evita que a imagem fique gigante no celular */
+      max-width: 100%;  /* Garante que ela não passe das bordas da tela */
+      width: auto;
+      object-fit: contain;
+    }
+    /* ------------------------------------ */
+
     .wrapper {
       position: relative;
       width: 100%;
@@ -45,7 +61,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      /* Impede bugs visuais da imagem sumir ou piscar ao virar */
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
@@ -53,12 +68,15 @@
 </head>
 <body>
 
+<!-- ELEMENTO DO TOPO -->
+<div class="topo-personalizado">
+  <!-- ATENÇÃO: Mude 'titulo.png' para o nome EXATO do seu arquivo PNG que você vai subir no GitHub -->
+  <img src="momo.png" alt="Título Superior">
+</div>
+
 <div class="wrapper">
   <div id="flipbook">
-    <!-- Capa -->
     <div class="page"><img src="capa.jpg" alt="Capa"></div>
-
-    <!-- 15 Páginas Internas -->
     <div class="page"><img src="pag1.jpg" alt=""></div>
     <div class="page"><img src="pag2.jpg" alt=""></div>
     <div class="page"><img src="pag3.jpg" alt=""></div>
@@ -74,51 +92,43 @@
     <div class="page"><img src="pag13.jpg" alt=""></div>
     <div class="page"><img src="pag14.jpg" alt=""></div>
     <div class="page"><img src="pag15.jpg" alt=""></div>
-
-    <!-- Contra-capa -->
     <div class="page"><img src="contracapa.jpg" alt="Contra-capa"></div>
   </div>
 </div>
 
 <script>
   $(document).ready(function() {
-    // Evita o movimento nativo do navegador ao arrastar o dedo
     document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-    // Função para calcular o tamanho ideal do livro na tela
     function iniciarLivro() {
       var larguraTela = $(window).width();
       var alturaTela = $(window).height();
       
-      // Tamanho padrão para computadores (Livro aberto completo)
       var larguraLivro = 800;
       var alturaLivro = 600;
 
-      // Se for celular (tela pequena), ajustamos o tamanho proporcionalmente
       if (larguraTela < 850) {
-        larguraLivro = larguraTela * 0.90; // Ocupa 90% da largura do celular
-        alturaLivro = (larguraLivro / 2) * 1.4; // Mantém proporção de livro em pé
+        larguraLivro = larguraTela * 0.90; 
+        alturaLivro = (larguraLivro / 2) * 1.4; 
         
-        // Garante que o livro não fique maior que a altura do celular
-        if (alturaLivro > alturaTela * 0.8) {
-          alturaLivro = alturaTela * 0.8;
+        // Deixa um espaço seguro de 35% da tela para a imagem do topo não empurrar o livro
+        if (alturaLivro > alturaTela * 0.65) {
+          alturaLivro = alturaTela * 0.65;
           larguraLivro = (alturaLivro / 1.4) * 2;
         }
       }
 
-      // Inicializa o Turn.js com física e gradientes de dobra ativos
       $('#flipbook').turn({
         width: larguraLivro,
         height: alturaLivro,
         elevation: 50,
-        gradients: true, // Cria sombras reais na folha enquanto ela dobra
+        gradients: true,
         autoCenter: true,
-        display: 'double', // Mantém o modo livro aberto para não bugar a imagem
-        acceleration: true // Usa aceleração de hardware (deixa o deslize super liso)
+        display: 'double',
+        acceleration: true
       });
     }
 
-    // Roda a função para carregar o livro
     iniciarLivro();
   });
 </script>
