@@ -13,45 +13,71 @@
             background-color: #2c3e50; 
             margin: 0;
             overflow: hidden;
-            touch-action: none; /* Bloqueia o arrasto da página do navegador no celular */
+            touch-action: none;
         }
-        .flip-book {
-            box-shadow: 0 0 20px rgba(0,0,0,0.7);
+        #book {
+            width: 400px;
+            height: 600px;
+        }
+        .page {
+            width: 400px;
+            height: 600px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: white;
         }
     </style>
 </head>
 <body>
 
-    <div class="flip-book" id="book"></div>
+    <!-- Estrutura do livro para o Turn.js -->
+    <div id="book">
+        <div class="page" style="background-image: url('capa.jpg')"></div>
+        <div class="page" style="background-image: url('pag1.jpg')"></div>
+        <div class="page" style="background-image: url('pag2.jpg')"></div>
+        <div class="page" style="background-image: url('pag3.jpg')"></div>
+        <div class="page" style="background-image: url('pag4.jpg')"></div>
+        <div class="page" style="background-image: url('pag5.jpg')"></div>
+        <div class="page" style="background-image: url('pag6.jpg')"></div>
+        <div class="page" style="background-image: url('pag7.jpg')"></div>
+        <div class="page" style="background-image: url('pag8.jpg')"></div>
+        <div class="page" style="background-image: url('pag9.jpg')"></div>
+        <div class="page" style="background-image: url('pag10.jpg')"></div>
+        <div class="page" style="background-image: url('pag11.jpg')"></div>
+        <div class="page" style="background-image: url('pag12.jpg')"></div>
+        <div class="page" style="background-image: url('pag13.jpg')"></div>
+        <div class="page" style="background-image: url('pag14.jpg')"></div>
+        <div class="page" style="background-image: url('pag15.jpg')"></div>
+        <div class="page" style="background-image: url('contracapa.jpg')"></div>
+    </div>
 
-    <!-- Biblioteca 3D -->
-    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+    <!-- Importando jQuery e Turn.js (necessários para o efeito de arrasto realista) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pageFlip = new St.PageFlip(document.getElementById('book'), {
-                width: 400,
+        $(document).ready(function() {
+            // Inicializa o livro com efeito de dobra dinâmico ao arrastar
+            $('#book').turn({
+                width: 800, // Largura total (2 páginas abertas)
                 height: 600,
-                size: "stretch",
-                minWidth: 250,
-                maxWidth: 500,
-                minHeight: 350,
-                maxHeight: 700,
-                drawShadow: true,
-                showCover: true,
-                usePortrait: true,
-                
-                // --- CONFIGURAÇÕES DE TOQUE QUE ESTAVAM FALTANDO ---
-                swipeDistance: 10,       // Distância mínima para o dedo ativar o movimento
-                clickEventForward: false, // Impede que o clique simples ignore o arrasto
-                useMouseEvents: true     // Garante que funcione arrastando no PC também
+                elevation: 50, // Altura do efeito 3D da dobra ao arrastar
+                gradients: true, // Adiciona sombras reais nas páginas enquanto dobra
+                autoCenter: true,
+                display: 'double', // Mostra duas páginas como um livro aberto
+                when: {
+                    turning: function(event, page, pageObj) {
+                        // Código para ajudar na transição suave
+                    }
+                }
             });
 
-            pageFlip.loadFromImages([
-                'capa.jpg', 'pag1.jpg', 'pag2.jpg', 'pag3.jpg', 'pag4.jpg', 
-                'pag5.jpg', 'pag6.jpg', 'pag7.jpg', 'pag8.jpg', 'pag9.jpg', 
-                'pag10.jpg', 'pag11.jpg', 'pag12.jpg', 'pag13.jpg', 'pag14.jpg', 
-                'pag15.jpg', 'contracapa.jpg'
-            ]);
+            // Ajuste para telas de celular (se a tela for pequena, mostra uma página por vez)
+            if ($(window).width() < 800) {
+                $('#book').turn('display', 'single');
+                $('#book').turn('size', 350, 525); // Reduz o tamanho para caber no celular
+            }
         });
     </script>
 </body>
