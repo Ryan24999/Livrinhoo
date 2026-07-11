@@ -2,125 +2,79 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- O código abaixo impede o celular de dar zoom ou mover a tela ao arrastar o dedo -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <!-- Impede o celular de tremer ou dar zoom indesejado -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Você</title>
     <style>
-        /* Força o fundo a ficar travado, impedindo qualquer movimento de rolagem */
         html, body {
-            width: 100%;
-            height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
             background-color: #2c3e50;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Remove gestos nativos do navegador do celular */
+            overflow: hidden;
+            /* Trava o fundo do celular de mover ou arrastar */
             touch-action: none; 
-            -webkit-user-select: none;
-            user-select: none;
         }
 
-        .book-wrapper {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
         }
 
-        #book {
-            margin: 0 auto;
-        }
-
-        .page {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: white;
+        .flip-book {
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
         }
     </style>
 </head>
 <body>
 
-    <div class="book-wrapper">
-        <div id="book">
-            <div class="page" style="background-image: url('capa.jpg')"></div>
-            <div class="page" style="background-image: url('pag1.jpg')"></div>
-            <div class="page" style="background-image: url('pag2.jpg')"></div>
-            <div class="page" style="background-image: url('pag3.jpg')"></div>
-            <div class="page" style="background-image: url('pag4.jpg')"></div>
-            <div class="page" style="background-image: url('pag5.jpg')"></div>
-            <div class="page" style="background-image: url('pag6.jpg')"></div>
-            <div class="page" style="background-image: url('pag7.jpg')"></div>
-            <div class="page" style="background-image: url('pag8.jpg')"></div>
-            <div class="page" style="background-image: url('pag9.jpg')"></div>
-            <div class="page" style="background-image: url('pag10.jpg')"></div>
-            <div class="page" style="background-image: url('pag11.jpg')"></div>
-            <div class="page" style="background-image: url('pag12.jpg')"></div>
-            <div class="page" style="background-image: url('pag13.jpg')"></div>
-            <div class="page" style="background-image: url('pag14.jpg')"></div>
-            <div class="page" style="background-image: url('pag15.jpg')"></div>
-            <div class="page" style="background-image: url('contracapa.jpg')"></div>
-        </div>
+    <div class="container">
+        <!-- O livro começa vazio e o script injeta as imagens -->
+        <div class="flip-book" id="book"></div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
-    
+    <!-- Biblioteca moderna e leve -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Garante que o celular ignore os comandos de arrastar nativos do navegador
-            document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura o tamanho baseado na tela do dispositivo
+            const isMobile = window.innerWidth < 768;
+            
+            // Se for celular, criamos páginas um pouco menores para caber na tela de pé
+            const width = isMobile ? window.innerWidth * 0.85 : 400;
+            const height = isMobile ? (width * 1.5) : 600;
 
-            function resizeBook() {
-                var wW = $(window).width();
-                var wH = $(window).height();
+            const pageFlip = new St.PageFlip(document.getElementById('book'), {
+                width: width,
+                height: height,
+                size: "fixed", 
+                drawShadow: true,      // Sombra 3D linda no meio do livro
+                showCover: true,       // Primeira e última são capa dura
+                usePortrait: isMobile, // Se for celular, mostra 1 página (evita o bug de ficar translúcido)
                 
-                var bW = 800;
-                var bH = 600;
-
-                // Ajuste agressivo para telas de celular rodarem nativamente sem o modo desktop ativado
-                if (wW < 850) {
-                    bW = wW * 0.90; 
-                    bH = (bW / 2) * 1.4; 
-                    
-                    if (bH > wH * 0.8) {
-                        bH = wH * 0.8;
-                        bW = (bH / 1.4) * 2;
-                    }
-                }
-
-                // Aplica o tamanho nas páginas individuais
-                $('.page').css({ width: bW / 2, height: bH });
-
-                // Se o livro já foi criado, altera o tamanho, se não, cria do zero
-                if ($('#book').turn('is')) {
-                    $('#book').turn('size', bW, bH);
-                } else {
-                    $('#book').turn({
-                        width: bW,
-                        height: bH,
-                        elevation: 50,
-                        gradients: true,
-                        autoCenter: true,
-                        display: 'double',
-                        acceleration: true
-                    });
-                }
-            }
-
-            // Executa a montagem do livro
-            resizeBook();
-
-            // Refaz o cálculo se o celular for girado de lado
-            $(window).resize(function() {
-                resizeBook();
+                // ATIVADORES DO ARRASTO DO DEDO:
+                swipeDistance: 15,         // Sensibilidade do arrasto
+                clickEventForward: false,  // Prioriza o toque e arrasto ao invés do clique seco
+                useMouseEvents: true       // Funciona arrastando no PC também
             });
+
+            // Lista das suas fotos na ordem exata
+            const imagens = [
+                'capa.jpg', 'pag1.jpg', 'pag2.jpg', 'pag3.jpg', 'pag4.jpg', 
+                'pag5.jpg', 'pag6.jpg', 'pag7.jpg', 'pag8.jpg', 'pag9.jpg', 
+                'pag10.jpg', 'pag11.jpg', 'pag12.jpg', 'pag13.jpg', 'pag14.jpg', 
+                'pag15.jpg', 'contracapa.jpg'
+            ];
+
+            // Inicializa o livro carregando as imagens diretamente
+            pageFlip.loadFromImages(imagens);
         });
     </script>
 </body>
