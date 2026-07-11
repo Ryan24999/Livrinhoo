@@ -6,7 +6,6 @@
   <title>Para Você</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
-  <!-- Biblioteca de Confetes -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   
   <style>
@@ -23,7 +22,6 @@
       align-items: center;
     }
 
-    /* Tela de Início (Onde a pessoa clica para abrir) */
     #start-screen {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -47,7 +45,6 @@
       font-family: sans-serif;
     }
 
-    /* O resto do código (Topo e Livro) */
     .topo-personalizado {
       position: absolute;
       top: 2vh; bottom: 62vh; left: 50%; transform: translateX(-50%);
@@ -67,13 +64,13 @@
 </head>
 <body>
 
-<!-- Tela de Abertura -->
 <div id="start-screen">
   <button id="btn-abrir">Abrir Presente! 🎁</button>
 </div>
 
-<!-- Som e Imagens -->
+<!-- Audios -->
 <audio id="som-festa" src="happy.mp3"></audio>
+<audio id="som-virar" src="pag.mp3"></audio>
 
 <div class="topo-personalizado">
   <img src="momo1.png" alt="Título Superior">
@@ -103,18 +100,12 @@
 
 <script>
   $(document).ready(function() {
-    // Ao clicar no botão:
+    var somVirar = document.getElementById('som-virar');
+
     $('#btn-abrir').click(function() {
-      // 1. Toca o som
       document.getElementById('som-festa').play();
-      
-      // 2. Joga confetes
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-      
-      // 3. Some com a tela de abertura
       $('#start-screen').fadeOut(500);
-      
-      // 4. Inicia o livro
       iniciarLivro();
     });
 
@@ -142,8 +133,9 @@
         acceleration: true,
         when: {
           turning: function() { 
-            // Som de página virando (aproveitando o mesmo áudio se quiser, ou um novo)
-            // Se quiser que o som da página seja diferente, adicione outro <audio>
+            // Toca o som de página toda vez que virar
+            somVirar.currentTime = 0;
+            somVirar.play();
           }
         }
       });
