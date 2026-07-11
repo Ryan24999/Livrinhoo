@@ -6,72 +6,76 @@
   <title>Para Você</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+  <!-- Biblioteca de Confetes -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <style>
     body {
+      background: #2c3e50;
+      margin: 0;
+      overflow: hidden;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Tela de Início (Onde a pessoa clica para abrir) */
+    #start-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: #2c3e50;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      touch-action: none; 
-      -webkit-user-select: none;
-      user-select: none;
+      z-index: 999;
+      flex-direction: column;
+    }
+    
+    #btn-abrir {
+      padding: 20px 40px;
+      font-size: 24px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      font-family: sans-serif;
     }
 
-    /* --- CONTÊINER DO TOPO (OCUPA TODA A ÁREA SUPERIOR) --- */
+    /* O resto do código (Topo e Livro) */
     .topo-personalizado {
       position: absolute;
-      top: 2vh; 
-      bottom: 62vh; /* Força o limite inferior até quase encostar no livro */
-      left: 50%;
-      transform: translateX(-50%); 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 95%; 
-      z-index: 10; 
+      top: 2vh; bottom: 62vh; left: 50%; transform: translateX(-50%);
+      display: flex; justify-content: center; align-items: center;
+      width: 95%; z-index: 10; 
     }
-
-    .topo-personalizado img {
-      width: 100%;
-      height: 100%;
-      max-width: 650px; /* Impede que estoure em telas muito grandes */
-      object-fit: contain; /* Garante que preencha o espaço sem cortar as letras */
-    }
+    .topo-personalizado img { width: 100%; height: 100%; max-width: 650px; object-fit: contain; }
 
     .wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      position: relative; width: 100%; height: 100%; display: flex;
+      justify-content: center; align-items: center;
     }
-
-    #flipbook {
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-
-    #flipbook .page {
-      background: white;
-      overflow: hidden;
-    }
-
-    #flipbook .page img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
+    #flipbook { box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+    #flipbook .page { background: white; overflow: hidden; }
+    #flipbook .page img { width: 100%; height: 100%; object-fit: cover; }
   </style>
 </head>
 <body>
 
+<!-- Tela de Abertura -->
+<div id="start-screen">
+  <button id="btn-abrir">Abrir Presente! 🎁</button>
+</div>
+
+<!-- Som e Imagens -->
+<audio id="som-festa" src="happy.mp3"></audio>
+
 <div class="topo-personalizado">
-  <!-- Nome alterado para momo1.png -->
   <img src="momo1.png" alt="Título Superior">
 </div>
 
@@ -99,20 +103,29 @@
 
 <script>
   $(document).ready(function() {
-    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+    // Ao clicar no botão:
+    $('#btn-abrir').click(function() {
+      // 1. Toca o som
+      document.getElementById('som-festa').play();
+      
+      // 2. Joga confetes
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+      
+      // 3. Some com a tela de abertura
+      $('#start-screen').fadeOut(500);
+      
+      // 4. Inicia o livro
+      iniciarLivro();
+    });
 
     function iniciarLivro() {
       var larguraTela = $(window).width();
       var alturaTela = $(window).height();
-      
-      var larguraLivro = 800;
-      var alturaLivro = 600;
+      var larguraLivro = 800, alturaLivro = 600;
 
       if (larguraTela < 850) {
         larguraLivro = larguraTela * 0.92; 
         alturaLivro = (larguraLivro / 2) * 1.35; 
-        
-        // Mantém uma proporção ideal para sobrar a área de cima inteira para o título
         if (alturaLivro > alturaTela * 0.58) {
           alturaLivro = alturaTela * 0.58;
           larguraLivro = (alturaLivro / 1.35) * 2;
@@ -126,11 +139,15 @@
         gradients: true,
         autoCenter: true,
         display: 'double',
-        acceleration: true
+        acceleration: true,
+        when: {
+          turning: function() { 
+            // Som de página virando (aproveitando o mesmo áudio se quiser, ou um novo)
+            // Se quiser que o som da página seja diferente, adicione outro <audio>
+          }
+        }
       });
     }
-
-    iniciarLivro();
   });
 </script>
 
