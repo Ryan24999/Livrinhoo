@@ -20,24 +20,23 @@
       user-select: none;
     }
 
-    /* --- ESTILO DO TOPO COM A IMAGEM PNG --- */
+    /* --- ESTILO DO TOPO (IMAGEM GRANDE) --- */
     .topo-personalizado {
       position: absolute;
-      top: 3vh; /* Distância do topo da tela */
+      top: 2vh; 
       left: 50%;
-      transform: translateX(-50%); /* Centraliza na horizontal */
+      transform: translateX(-50%); 
       text-align: center;
-      width: 90%;
+      width: 95%; 
       z-index: 10; 
     }
 
     .topo-personalizado img {
-      max-height: 70px; /* Evita que a imagem fique gigante no celular */
-      max-width: 100%;  /* Garante que ela não passe das bordas da tela */
-      width: auto;
+      max-height: 180px; /* Imagem bem grande no topo */
+      width: 85%;        
+      max-width: 600px;  
       object-fit: contain;
     }
-    /* ------------------------------------ */
 
     .wrapper {
       position: relative;
@@ -46,6 +45,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-top: 50px; /* Empurra o livro um pouco para baixo para acomodar a imagem grande */
     }
 
     #flipbook {
@@ -68,9 +68,8 @@
 </head>
 <body>
 
-<!-- ELEMENTO DO TOPO -->
 <div class="topo-personalizado">
-  <!-- ATENÇÃO: Mude 'titulo.png' para o nome EXATO do seu arquivo PNG que você vai subir no GitHub -->
+  <!-- MUDE 'titulo.png' PARA O NOME DA SUA IMAGEM QUE ESTÁ NO GITHUB -->
   <img src="momo.png" alt="Título Superior">
 </div>
 
@@ -111,9 +110,9 @@
         larguraLivro = larguraTela * 0.90; 
         alturaLivro = (larguraLivro / 2) * 1.4; 
         
-        // Deixa um espaço seguro de 35% da tela para a imagem do topo não empurrar o livro
-        if (alturaLivro > alturaTela * 0.65) {
-          alturaLivro = alturaTela * 0.65;
+        // Ajuste de altura agressivo para deixar espaço para a imagem grande acima
+        if (alturaLivro > alturaTela * 0.60) {
+          alturaLivro = alturaTela * 0.60;
           larguraLivro = (alturaLivro / 1.4) * 2;
         }
       }
