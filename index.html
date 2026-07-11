@@ -2,27 +2,41 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- O código abaixo impede o celular de dar zoom ou mover a tela ao arrastar o dedo -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Para Você</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #2c3e50; 
-            margin: 0;
-            overflow: hidden;
-            touch-action: none;
-        }
-        /* Contêiner principal para garantir que o livro fique centralizado */
-        .book-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* Força o fundo a ficar travado, impedindo qualquer movimento de rolagem */
+        html, body {
             width: 100%;
             height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Remove gestos nativos do navegador do celular */
+            touch-action: none; 
+            -webkit-user-select: none;
+            user-select: none;
         }
+
+        .book-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #book {
+            margin: 0 auto;
+        }
+
         .page {
             background-size: cover;
             background-position: center;
@@ -34,7 +48,6 @@
 <body>
 
     <div class="book-wrapper">
-        <!-- Estrutura do livro -->
         <div id="book">
             <div class="page" style="background-image: url('capa.jpg')"></div>
             <div class="page" style="background-image: url('pag1.jpg')"></div>
@@ -56,63 +69,57 @@
         </div>
     </div>
 
-    <!-- Scripts necessários -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     
     <script>
         $(document).ready(function() {
-            // Função para calcular o tamanho ideal do livro baseado na tela
-            function getBookSize() {
-                var windowWidth = $(window).width();
-                var windowHeight = $(window).height();
-                
-                // Tamanho padrão para computadores (Livro aberto completo)
-                var bookWidth = 800;
-                var bookHeight = 600;
+            // Garante que o celular ignore os comandos de arrastar nativos do navegador
+            document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-                // Se for celular ou tela pequena, reduzimos proporcionalmente mantendo as duas páginas
-                if (windowWidth < 850) {
-                    bookWidth = windowWidth * 0.95; // Usa 95% da largura da tela do celular
-                    bookHeight = (bookWidth / 2) * 1.4; // Mantém a proporção de livro em pé
+            function resizeBook() {
+                var wW = $(window).width();
+                var wH = $(window).height();
+                
+                var bW = 800;
+                var bH = 600;
+
+                // Ajuste agressivo para telas de celular rodarem nativamente sem o modo desktop ativado
+                if (wW < 850) {
+                    bW = wW * 0.90; 
+                    bH = (bW / 2) * 1.4; 
                     
-                    // Garante que o livro não fique mais alto que a tela do celular
-                    if (bookHeight > windowHeight * 0.8) {
-                        bookHeight = windowHeight * 0.8;
-                        bookWidth = (bookHeight / 1.4) * 2;
+                    if (bH > wH * 0.8) {
+                        bH = wH * 0.8;
+                        bW = (bH / 1.4) * 2;
                     }
                 }
 
-                return { width: bookWidth, height: bookHeight };
+                // Aplica o tamanho nas páginas individuais
+                $('.page').css({ width: bW / 2, height: bH });
+
+                // Se o livro já foi criado, altera o tamanho, se não, cria do zero
+                if ($('#book').turn('is')) {
+                    $('#book').turn('size', bW, bH);
+                } else {
+                    $('#book').turn({
+                        width: bW,
+                        height: bH,
+                        elevation: 50,
+                        gradients: true,
+                        autoCenter: true,
+                        display: 'double',
+                        acceleration: true
+                    });
+                }
             }
 
-            var size = getBookSize();
+            // Executa a montagem do livro
+            resizeBook();
 
-            // Inicializa o Turn.js SEMPRE no modo duplo (corrige a translucidez)
-            $('#book').turn({
-                width: size.width,
-                height: size.height,
-                elevation: 50,
-                gradients: true, // Habilita sombras e gradientes realistas na dobra
-                autoCenter: true,
-                display: 'double', // Mantém o modo livro aberto para evitar bugs visuais
-                acceleration: true // Usa aceleração de hardware do celular para ficar super liso
-            });
-
-            // Ajusta as páginas internas para o tamanho correto
-            $('.page').css({
-                width: size.width / 2,
-                height: size.height
-            });
-
-            // Redimensiona o livro caso a pessoa vire o celular de lado
+            // Refaz o cálculo se o celular for girado de lado
             $(window).resize(function() {
-                var newSize = getBookSize();
-                $('#book').turn('size', newSize.width, newSize.height);
-                $('.page').css({
-                    width: newSize.width / 2,
-                    height: newSize.height
-                });
+                resizeBook();
             });
         });
     </script>
