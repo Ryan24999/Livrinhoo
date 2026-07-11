@@ -1,81 +1,127 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <!-- Impede o celular de tremer ou dar zoom indesejado -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Você</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #2c3e50;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            /* Trava o fundo do celular de mover ou arrastar */
-            touch-action: none; 
-        }
+  <meta charset="UTF-8" />
+  <!-- Bloqueia o zoom e o movimento involuntário da tela no celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Para Você</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+  <style>
+    body {
+      background: #2c3e50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      /* Remove o comportamento de arrastar a página inteira no celular */
+      touch-action: none; 
+      -webkit-user-select: none;
+      user-select: none;
+    }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
+    /* Contêiner para centralizar o livro perfeitamente */
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .flip-book {
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
-        }
-    </style>
+    #flipbook {
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    #flipbook .page {
+      background: white;
+      overflow: hidden;
+    }
+
+    #flipbook .page img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Impede bugs visuais da imagem sumir ou piscar ao virar */
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- O livro começa vazio e o script injeta as imagens -->
-        <div class="flip-book" id="book"></div>
-    </div>
+<div class="wrapper">
+  <div id="flipbook">
+    <!-- Capa -->
+    <div class="page"><img src="capa.jpg" alt="Capa"></div>
 
-    <!-- Biblioteca moderna e leve -->
-    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configura o tamanho baseado na tela do dispositivo
-            const isMobile = window.innerWidth < 768;
-            
-            // Se for celular, criamos páginas um pouco menores para caber na tela de pé
-            const width = isMobile ? window.innerWidth * 0.85 : 400;
-            const height = isMobile ? (width * 1.5) : 600;
+    <!-- 15 Páginas Internas -->
+    <div class="page"><img src="pag1.jpg" alt=""></div>
+    <div class="page"><img src="pag2.jpg" alt=""></div>
+    <div class="page"><img src="pag3.jpg" alt=""></div>
+    <div class="page"><img src="pag4.jpg" alt=""></div>
+    <div class="page"><img src="pag5.jpg" alt=""></div>
+    <div class="page"><img src="pag6.jpg" alt=""></div>
+    <div class="page"><img src="pag7.jpg" alt=""></div>
+    <div class="page"><img src="pag8.jpg" alt=""></div>
+    <div class="page"><img src="pag9.jpg" alt=""></div>
+    <div class="page"><img src="pag10.jpg" alt=""></div>
+    <div class="page"><img src="pag11.jpg" alt=""></div>
+    <div class="page"><img src="pag12.jpg" alt=""></div>
+    <div class="page"><img src="pag13.jpg" alt=""></div>
+    <div class="page"><img src="pag14.jpg" alt=""></div>
+    <div class="page"><img src="pag15.jpg" alt=""></div>
 
-            const pageFlip = new St.PageFlip(document.getElementById('book'), {
-                width: width,
-                height: height,
-                size: "fixed", 
-                drawShadow: true,      // Sombra 3D linda no meio do livro
-                showCover: true,       // Primeira e última são capa dura
-                usePortrait: isMobile, // Se for celular, mostra 1 página (evita o bug de ficar translúcido)
-                
-                // ATIVADORES DO ARRASTO DO DEDO:
-                swipeDistance: 15,         // Sensibilidade do arrasto
-                clickEventForward: false,  // Prioriza o toque e arrasto ao invés do clique seco
-                useMouseEvents: true       // Funciona arrastando no PC também
-            });
+    <!-- Contra-capa -->
+    <div class="page"><img src="contracapa.jpg" alt="Contra-capa"></div>
+  </div>
+</div>
 
-            // Lista das suas fotos na ordem exata
-            const imagens = [
-                'capa.jpg', 'pag1.jpg', 'pag2.jpg', 'pag3.jpg', 'pag4.jpg', 
-                'pag5.jpg', 'pag6.jpg', 'pag7.jpg', 'pag8.jpg', 'pag9.jpg', 
-                'pag10.jpg', 'pag11.jpg', 'pag12.jpg', 'pag13.jpg', 'pag14.jpg', 
-                'pag15.jpg', 'contracapa.jpg'
-            ];
+<script>
+  $(document).ready(function() {
+    // Evita o movimento nativo do navegador ao arrastar o dedo
+    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-            // Inicializa o livro carregando as imagens diretamente
-            pageFlip.loadFromImages(imagens);
-        });
-    </script>
+    // Função para calcular o tamanho ideal do livro na tela
+    function iniciarLivro() {
+      var larguraTela = $(window).width();
+      var alturaTela = $(window).height();
+      
+      // Tamanho padrão para computadores (Livro aberto completo)
+      var larguraLivro = 800;
+      var alturaLivro = 600;
+
+      // Se for celular (tela pequena), ajustamos o tamanho proporcionalmente
+      if (larguraTela < 850) {
+        larguraLivro = larguraTela * 0.90; // Ocupa 90% da largura do celular
+        alturaLivro = (larguraLivro / 2) * 1.4; // Mantém proporção de livro em pé
+        
+        // Garante que o livro não fique maior que a altura do celular
+        if (alturaLivro > alturaTela * 0.8) {
+          alturaLivro = alturaTela * 0.8;
+          larguraLivro = (alturaLivro / 1.4) * 2;
+        }
+      }
+
+      // Inicializa o Turn.js com física e gradientes de dobra ativos
+      $('#flipbook').turn({
+        width: larguraLivro,
+        height: alturaLivro,
+        elevation: 50,
+        gradients: true, // Cria sombras reais na folha enquanto ela dobra
+        autoCenter: true,
+        display: 'double', // Mantém o modo livro aberto para não bugar a imagem
+        acceleration: true // Usa aceleração de hardware (deixa o deslize super liso)
+      });
+    }
+
+    // Roda a função para carregar o livro
+    iniciarLivro();
+  });
+</script>
+
 </body>
 </html>
